@@ -1,42 +1,27 @@
-# Respostas de Exemplo para Formulário de Entrevista
+# Respostas de Exemplo para Entrevista - Consulta Presencial por QR Code
 
-> Material simulado para treinamento da equipe, teste piloto do roteiro e planejamento de análise. Não representa dados reais e não deve ser apresentado como resultado de pesquisa.
+> Conteúdo inteiramente simulado para testar o roteiro de entrevista. Não é dado coletado e não pode ser citado como resultado, persona validada ou evidência empírica.
 
-## Perfil A - Pessoa idosa usuária de aplicativo
-1. Frequência de pedidos: duas vezes por semana, às vezes com ajuda.
-2. Dificuldade recente: letra pequena e nomes de pratos pouco claros.
-3. Informação procurada: ingredientes, nível de pimenta e presença de lactose.
-4. Situação problemática: prato com queijo sem informação clara na descrição.
-5. Informação essencial: ingredientes detalhados e alérgenos destacados.
-6. Como verifica hoje: lê a descrição e, se necessário, conversa com o restaurante.
-7. O que facilitaria: fonte maior, áudio e filtros simples.
-8. Recurso desejado: aumento de fonte.
-9. Dificuldades: muito texto agrupado e botões pequenos.
-10. Mudança prioritária: opção de ouvir a descrição do prato.
+## Perfil A - Pessoa idosa que consulta o cardápio na mesa
+1. Como costuma consultar o cardápio em restaurante: [exemplo simulado] pede a versão impressa ou ajuda a equipe.
+2. Como se sentiria ao escanear um QR code: [exemplo simulado] precisaria de instrução clara e opção de pedir ajuda.
+3. Dificuldade ao usar o celular: [exemplo simulado] texto pequeno, contraste baixo e botões próximos.
+4. Informação necessária para escolher: [exemplo simulado] ingredientes, preço por porção e tamanho da porção.
+5. Recurso que ajudaria: [exemplo simulado] texto ampliado e instruções curtas.
 
 ## Perfil B - Pessoa com alergia alimentar
-1. Frequência de pedidos: três ou quatro vezes por semana.
-2. Dificuldade recente: descrição incompleta de um molho.
-3. Informação procurada: alérgenos e possibilidade de contato cruzado.
-4. Situação problemática: preocupação com reação por falta de informação explícita.
-5. Informação essencial: lista de alérgenos por prato.
-6. Como verifica hoje: descrição e mensagem ao restaurante.
-7. O que facilitaria: filtro por alérgeno e informação clara sobre preparo.
-8. Recurso desejado: dados padronizados e atualizados.
-9. Dificuldades: linguagem vaga e inconsistente.
-10. Mudança prioritária: informação de alérgenos visível em cada prato.
+1. O que precisa saber antes de pedir: [exemplo simulado] alérgenos, ingredientes compostos e risco de contato cruzado.
+2. Como confirma uma informação duvidosa: [exemplo simulado] pergunta diretamente à equipe.
+3. Informação importante no cardápio QR: [exemplo simulado] aviso por prato e ressalva de que o filtro não garante segurança.
+4. O que não deveria acontecer: [exemplo simulado] um filtro ocultar o aviso de que a cozinha compartilha utensílios.
+5. Recurso que ajudaria: [exemplo simulado] botão visível para falar com a equipe.
 
-## Perfil C - Pessoa com intolerância à lactose
-1. Frequência de pedidos: uma ou duas vezes por semana.
-2. Dificuldade recente: purê com manteiga sem aviso claro.
-3. Informação procurada: leite, queijo, manteiga e creme.
-4. Situação problemática: mal-estar associado a informação incompleta.
-5. Informação essencial: ingredientes e possibilidade de personalização.
-6. Como verifica hoje: descrição e conversa com o restaurante.
-7. O que facilitaria: indicação confiável de opções sem lactose.
-8. Recurso desejado: contraste alto em ambiente noturno.
-9. Dificuldades: falta de padrão nas descrições.
-10. Mudança prioritária: ícones acompanhados de texto explicativo.
+## Perfil C - Pessoa com baixa visão ou preferência por áudio
+1. Como usaria o QR code: [exemplo simulado] abriria a câmera e seguiria o link no navegador.
+2. Dificuldades possíveis: [exemplo simulado] foco pouco visível, zoom que quebra a página e controles sem rótulo.
+3. Recurso que ajudaria: [exemplo simulado] texto ampliado, contraste e leitura em voz alta.
+4. Alternativa se o áudio não funcionar: [exemplo simulado] busca e consulta por texto com leitor de tela.
+5. Mudança prioritária: [exemplo simulado] deixar busca, filtros e ajuda fáceis de localizar.
 
 ## Uso acadêmico
-Substitua estes exemplos por dados coletados com consentimento antes de relatar resultados empíricos. Não atribua citações ou respostas a participantes reais sem registros correspondentes.
+Use este arquivo somente para planejar ou pilotar as perguntas. Para relatar pesquisa, substitua os exemplos por registros reais coletados com consentimento, preserve anonimato e descreva o método e as limitações.

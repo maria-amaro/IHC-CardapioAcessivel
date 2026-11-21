@@ -1,34 +1,42 @@
-# Análise do Figma (Heurística e Acessibilidade)
+# Análise do Protótipo Figma - Cardápio Acessível
 
-## Referência
-Protótipo analisado: https://www.figma.com/design/ZIVOfNYTfKekosmA44cS64/Prot%C3%B3tipo?t=a0esSpED2SJHKLsy-1
+## Referência e cenário
+Protótipo: https://www.figma.com/design/ZIVOfNYTfKekosmA44cS64/Prot%C3%B3tipo?t=a0esSpED2SJHKLsy-1
 
-## Pontos fortes observados
-- Recursos visíveis de acessibilidade, como ajuste de fonte, contraste e opções de áudio/voz.
-- Filtros de restrições alimentares presentes na interface.
-- Alertas relacionados a alérgenos e risco de contato cruzado.
-- Organização do cardápio voltada à consulta de pratos e informações alimentares.
+O cenário definido é o de um cardápio de restaurante presencial aberto no navegador após a leitura de um QR code na mesa. A implementação atual é uma réplica funcional local; não se deve confundir o QR code de entrada nem o envio de pedido com funcionalidades já integradas.
 
-## Questões heurísticas para validar no protótipo
-1. H1 - Visibilidade do status: verificar se a interface confirma quando filtros e preferências são aplicados.
-2. H3 - Controle e liberdade: verificar se é possível desfazer escolhas e limpar filtros facilmente.
-3. H4 - Consistência e padrões: verificar se nomenclaturas e controles permanecem consistentes entre telas e tamanhos de tela.
-4. H5 - Prevenção de erros: evitar que “sem o alérgeno” seja entendido como garantia contra contato cruzado.
-5. H6 - Reconhecimento: manter informações críticas visíveis sem exigir que a pessoa as memorize entre telas.
-6. H8 - Estética e design minimalista: priorizar informações necessárias para decidir com segurança.
-7. H9 - Recuperação de erros: orientar a pessoa quando nenhum prato corresponder aos filtros.
+## Elementos observados no protótipo
+- Cabeçalho de acessibilidade separado dos controles e dos dados do restaurante.
+- Ajuste de texto, contraste, navegação por voz, leitor de tela e limpeza de filtros.
+- Identificação do restaurante, chamada de atendimento e acesso ao pedido.
+- Busca, sugestões e filtros alimentares.
+- Lista de pratos com preço, ingredientes/resumo, alérgenos e ações.
+- Detalhes de prato, ajustes de acessibilidade e fluxo de pedido.
 
-Esses itens são hipóteses de inspeção, não resultados confirmados. Devem ser validados diretamente no protótipo antes de constarem como problemas encontrados.
+## Estado da avaliação heurística
+Os itens abaixo são perguntas de inspeção que ainda precisam ser avaliadas diretriz por diretriz e registradas com evidência. Não são achados confirmados:
+1. H1 - Visibilidade do status: filtros, atualizações de quantidade e confirmação do pedido são anunciados?
+2. H2 - Compatibilidade com o mundo real: termos, preço por porção, mesa e informações alimentares são compreensíveis?
+3. H3 - Controle e liberdade: é possível voltar, limpar filtros e remover itens sem perder contexto?
+4. H4 - Consistência e padrões: controles mantêm posições, rótulos e estados entre páginas e tamanhos de tela?
+5. H5 - Prevenção de erros: conflito entre filtros e dados dos pratos é identificado sem sugerir segurança absoluta?
+6. H6 - Reconhecimento: ingredientes e alérgenos podem ser consultados sem depender da memória entre telas?
+7. H7 - Flexibilidade e eficiência: os controles por toque, teclado e voz funcionam como alternativas equivalentes?
+8. H8 - Design minimalista: avisos e informações prioritárias permanecem fáceis de localizar?
+9. H9 - Recuperação de erros: busca sem resultados ou falha no reconhecimento de voz oferece uma alternativa clara?
+10. H10 - Ajuda: a forma de chamar a equipe é fácil de encontrar e tem comportamento previsível?
 
-## Recomendações para validação
-- Verificar contraste de texto, controles e alertas nos modos disponíveis.
-- Testar navegação por teclado e ordem de foco.
-- Conferir nomes acessíveis e leitura dos controles com tecnologia assistiva.
-- Usar texto junto a cores ou ícones para comunicar estados e riscos.
-- Explicitar que a informação do cardápio não elimina o risco de contato cruzado.
+## Verificações necessárias
+- Fazer a inspeção manual de todas as telas e estados do Figma e da implementação.
+- Testar combinação e limpeza de filtros, ausência de resultados, pedido vazio e pedido preenchido.
+- Conferir contraste, ampliação, navegação por teclado e nomes acessíveis.
+- Validar os fluxos de voz em navegadores compatíveis e confirmar alternativa textual.
+- Diferenciar dados observados de hipóteses; registrar severidade e evidência para cada achado real.
 
-## Evidências a coletar
-- Capturas com ajustes de fonte e contraste ativos.
-- Captura de filtro aplicado e resultado correspondente.
-- Captura de alerta de alérgenos e orientação de confirmação com a equipe.
-- Registro de heurística, severidade e sugestão para cada problema validado.
+## Evidências a guardar
+- Tela inicial em celular e desktop.
+- Preferências selecionadas e resultado dos filtros.
+- Detalhe de prato com ingredientes, alérgenos e aviso de contato cruzado.
+- Página de ajustes em cada modo de cor e tamanho de texto.
+- Pedido, estado vazio, edição de quantidade e confirmação demonstrativa.
+- Resultado dos testes de teclado e tecnologia assistiva.

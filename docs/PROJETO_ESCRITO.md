@@ -1,66 +1,77 @@
 # Projeto Escrito - Cardápio Acessível
 
 ## 1. Visão geral
-Este projeto propõe uma plataforma de cardápio digital acessível para pessoas com restrições alimentares, pessoas idosas e pessoas com deficiência visual. O objetivo é apoiar escolhas autônomas e seguras com informações claras sobre ingredientes, alérgenos e risco de contato cruzado.
+O Cardápio Acessível é um protótipo de cardápio web para uso presencial em restaurantes. A pessoa cliente escaneia um QR code disponibilizado na mesa e consulta o cardápio no navegador do próprio celular, sem instalar um aplicativo. O foco é tornar ingredientes, alérgenos e opções de acessibilidade fáceis de encontrar antes de escolher um prato.
+
+O protótipo atual usa a Casa do Ipê e a Mesa 08 como dados demonstrativos. Não representa um restaurante real.
 
 ## 2. Problema
-Cardápios digitais podem apresentar informações incompletas ou pouco visíveis sobre ingredientes e alérgenos. Texto pequeno, linguagem vaga e filtros pouco acessíveis dificultam a consulta, especialmente para pessoas com baixa visão, cegueira, restrições alimentares ou menor familiaridade com tecnologia.
+Durante uma refeição presencial, clientes podem precisar de informações que não estão claras em cardápios impressos ou digitais: ingredientes, alérgenos, possibilidade de contato cruzado, preço e opções de personalização. Texto pequeno, nomenclatura ambígua, filtros inacessíveis e a necessidade de chamar a equipe para cada dúvida podem reduzir autonomia e dificultar a tomada de decisão.
 
-## 3. Objetivo geral
-Projetar e avaliar um cardápio digital que facilite a consulta de pratos e de informações alimentares, com foco em autonomia, clareza, acessibilidade e segurança na tomada de decisão.
+## 3. Objetivo
+Projetar e avaliar um cardápio web responsivo, acessado por QR code no contexto de restaurante presencial, que permita consultar pratos e informações alimentares com clareza, autonomia e recursos de acessibilidade. O sistema deve informar limites dos dados e não prometer segurança contra contato cruzado.
 
-## 4. Público-alvo prioritário
-- Pessoas com alergias e intolerâncias alimentares.
-- Pessoas idosas ou com baixo letramento digital.
-- Pessoas com deficiência visual e usuários de leitores de tela.
+## 4. Público-alvo
+- Pessoas com alergias ou intolerâncias alimentares.
+- Pessoas com baixa visão, cegueira ou que utilizam leitores de tela.
+- Pessoas daltônicas.
+- Pessoas idosas ou com diferentes níveis de letramento digital.
+- Clientes que preferem consultar o cardápio sem aguardar atendimento para obter informações básicas.
 
-## 5. Metodologia
-O projeto segue uma abordagem de Interação Humano-Computador centrada nas necessidades dos usuários:
-1. Levantamento e organização de requisitos.
-2. Pesquisa documental e benchmarking.
-3. Prototipação iterativa.
-4. Avaliação por tarefas e inspeção heurística.
-5. Priorização de problemas e proposição de melhorias.
+## 5. Escopo do protótipo
 
-### 5.1 Ajuste metodológico
-Não foram realizadas entrevistas específicas com pessoas com baixa visão nesta etapa. As necessidades relacionadas a esse público devem ser justificadas por bibliografia especializada, diretrizes de acessibilidade e validação futura com participantes desse perfil. Respostas de entrevista de exemplo não devem ser apresentadas como dados reais.
+### Implementado no frontend
+- Cardápio responsivo para celular e desktop.
+- Busca por nome e ingrediente, sugestões e filtros por alérgenos e preferências alimentares.
+- Ocultação de pratos incompatíveis com filtros, com opção de exibi-los identificados.
+- Páginas de detalhes com ingredientes, alérgenos, personalizações e avisos de contato cruzado.
+- Pedido demonstrativo com adição, remoção, alteração de quantidade e resumo.
+- Ajuste de texto, modos de cor/contraste, filtros aproximados para daltonismo, leitura em voz alta, navegação e busca por voz.
+- Preferências de acessibilidade persistidas localmente neste aparelho.
 
-## 6. Requisitos funcionais iniciais
-- RF01: buscar pratos por nome ou ingrediente.
-- RF02: filtrar pratos por alérgenos a evitar.
-- RF03: exibir ingredientes dos pratos.
-- RF04: destacar alérgenos e informar sobre possível contato cruzado.
-- RF05: apresentar preço e informações de decisão em linguagem clara.
-- RF06: permitir ajuste do tamanho do texto.
-- RF07: oferecer opções de contraste.
+### Fora do escopo funcional atual
+- Gerar ou imprimir QR codes, hospedar o serviço publicamente ou associar QR codes reais a mesas.
+- Gerenciar restaurantes, mesas, cardápios ou usuários em um painel administrativo.
+- Enviar pedidos à cozinha ou ao sistema de ponto de venda. A confirmação atual é demonstrativa.
+- Notificar funcionários ao tocar em “Chamar atendimento”; hoje o botão apenas anuncia uma mensagem local no navegador.
+- Conectar o frontend à API que permanece no diretório `backend/`.
 
-## 7. Requisitos não funcionais iniciais
-- RNF01: considerar diretrizes de acessibilidade, incluindo WCAG 2.2.
-- RNF02: permitir operação por teclado nos fluxos principais.
-- RNF03: utilizar estrutura semântica compatível com tecnologias assistivas.
-- RNF04: empregar linguagem simples e consistente.
-- RNF05: evitar padrões manipulativos de interface.
-- RNF06: minimizar coleta de dados pessoais.
+## 6. Requisitos funcionais
+- RF01: consultar o cardápio no navegador em telas de celular e desktop.
+- RF02: buscar pratos por nome ou ingrediente.
+- RF03: filtrar pratos por alérgenos a evitar e preferências alimentares.
+- RF04: explicar quando um prato conflita com filtros ativos e permitir visualizar pratos ocultos com aviso.
+- RF05: apresentar ingredientes, alérgenos, preço e possibilidade de contato cruzado.
+- RF06: apresentar detalhes e personalizações de cada prato.
+- RF07: permitir montar e revisar um pedido demonstrativo.
+- RF08: permitir ajustar texto, contraste, filtros de daltonismo e recursos de voz.
+- RF09: disponibilizar uma forma de chamar a equipe. No protótipo atual, a ação só apresenta um aviso local; a notificação real está pendente.
 
-## 8. Aspectos éticos e privacidade
-- Obter consentimento livre e esclarecido em pesquisas com participantes.
-- Anonimizar dados de pesquisa e coletar somente o necessário.
-- Não apresentar dados simulados como resultados empíricos.
-- Informar limitações dos dados de alérgenos e a necessidade de confirmar condições de preparo com o estabelecimento.
-- Permitir que participantes desistam da pesquisa.
+## 7. Requisitos não funcionais e de qualidade
+- RNF01: interface responsiva e utilizável em telas pequenas e grandes.
+- RNF02: estrutura semântica, rótulos acessíveis, foco visível e navegação por teclado.
+- RNF03: mensagens importantes não dependem exclusivamente de cor.
+- RNF04: linguagem simples e consistente.
+- RNF05: ajustes de acessibilidade não removem conteúdo ou funcionalidade.
+- RNF06: minimizar dados pessoais e deixar claro quando funções são apenas demonstrativas.
+- RNF07: informar que filtros de receita não garantem ausência de contato cruzado.
 
-## 9. Avaliação
-A avaliação prevista combina tarefas de uso e inspeção heurística. Os problemas devem ser registrados com evidências, heurísticas relacionadas, severidade e propostas de correção. Resultados de SUS só devem ser apresentados se o instrumento tiver sido aplicado a participantes reais e seus dados forem consolidados.
+## 8. Tecnologia e arquitetura atual
+- Frontend: React, TypeScript e Vite em `frontend/`.
+- Estado de busca, pedido, navegação e avisos mantido no cliente.
+- Preferências de acessibilidade salvas em `localStorage`; busca e pedido ficam em memória.
+- Há uma API inicial em `backend/`, mas ela não está conectada ao frontend atual e não envia pedidos.
 
-## 10. Tecnologias
-- Frontend: React, TypeScript e Vite.
-- Backend: Node.js, Express e TypeScript.
+## 9. Pesquisa, avaliação e limites metodológicos
+Entrevistas de exemplo são material simulado e não podem ser citadas como dados coletados. Não foram realizados testes com leitores de tela reais nem validação com usuários nesta versão documentada. Avaliações heurísticas, auditorias de acessibilidade e testes com participantes devem ser descritos somente com evidências e registros correspondentes.
 
-## 11. Artefatos
-- Código-fonte do frontend e backend.
-- Protótipo e documentação de requisitos.
-- Relatórios de avaliação e evidências.
-- Apresentação do projeto.
+A interface pode apoiar a consulta, mas não substitui confirmação com o restaurante, especialmente para alergias graves. Os dados fictícios devem ser revisados pelo estabelecimento antes de qualquer uso real.
 
-## 12. Estado do protótipo
-O frontend apresenta busca e filtros por alérgenos, informações de pratos, preferências de acessibilidade e resumo de pedido. O backend disponibiliza uma API inicial de saúde e listagem de pratos. A integração entre essas partes deve ser validada antes de apresentar o sistema como solução completa.
+## 10. Próximos passos
+1. Validar o problema, requisitos e fluxo com usuários e equipe do restaurante.
+2. Substituir dados demonstrativos por cardápio, preços, ingredientes e alérgenos aprovados pelo estabelecimento.
+3. Decidir se o produto será apenas informativo ou se enviará pedidos à equipe; implementar a integração correspondente.
+4. Implementar um canal real para solicitar atendimento, ou deixar explícito na interface que a ação é demonstrativa.
+5. Hospedar o frontend, gerar e testar QR codes por mesa e confirmar o fluxo em celulares reais.
+6. Realizar testes de acessibilidade, usabilidade e privacidade antes de qualquer piloto.
+7. Finalizar relatórios, evidências, referências e apresentação.

@@ -44,5 +44,5 @@ Cardápio web para restaurante presencial, aberto pelo cliente ao escanear um QR
 
 ## Compartilhamento
 - [x] Repositório Git e remoto do grupo configurados.
-- [ ] Revisar e aprovar as alterações locais da substituição antes de commit/push.
-- [ ] Só então publicar a versão oficial e confirmar que outra pessoa consegue clonar e executar.
+- [x] Versão oficial e documentação atualizada publicadas em `main` (commit `de3a9c7`).
+- [ ] Pedir a outro integrante para clonar, instalar e executar o frontend seguindo o README.

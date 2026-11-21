@@ -1,8 +1,30 @@
-import { useEffect, useMemo, useState } from 'react';
-import { alergenosDisponiveis, dishes, type Alergeno } from './data/menu';
+import { useMemo, useState } from 'react';
+import { dishes } from './data/menu';
+import { Utensils } from 'lucide-react';
 
 type ContrastMode = 'padrao' | 'alto-claro' | 'alto-escuro';
 type CartState = Record<string, number>;
+type Preference = 'gluten' | 'lactose' | 'amendoim' | 'frutos do mar' | 'soja' | 'ovo' | 'vegano' | 'vegetariano';
+type SpeechRecognitionResult = { results: ArrayLike<ArrayLike<{ transcript: string }>> };
+type SpeechRecognitionInstance = {
+	lang: string;
+	interimResults: boolean;
+	onresult: ((event: SpeechRecognitionResult) => void) | null;
+	onerror: (() => void) | null;
+	start: () => void;
+};
+type SpeechRecognitionConstructor = new () => SpeechRecognitionInstance;
+
+const preferenceOptions: { key: Preference; label: string }[] = [
+	{ key: 'gluten', label: 'Sem glúten' },
+	{ key: 'lactose', label: 'Sem lactose' },
+	{ key: 'amendoim', label: 'Sem amendoim' },
+	{ key: 'frutos do mar', label: 'Sem frutos do mar' },
+	{ key: 'soja', label: 'Sem soja' },
+	{ key: 'ovo', label: 'Sem ovo' },
+	{ key: 'vegano', label: 'Vegano' },
+	{ key: 'vegetariano', label: 'Vegetariano' },
+];
 
 const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER ?? '';
 const WHATSAPP_DEFAULT_MESSAGE =
@@ -19,7 +41,7 @@ function App() {
 	const [query, setQuery] = useState('');
 	const [fontScale, setFontScale] = useState(100);
 	const [contrast, setContrast] = useState<ContrastMode>('padrao');
-	const [selectedAlergenos, setSelectedAlergenos] = useState<Alergeno[]>([]);
+	const [selectedPreferences, setSelectedPreferences] = useState<Preference[]>([]);
 	const [selectedDishId, setSelectedDishId] = useState<string | null>(null);
 	const [cart, setCart] = useState<CartState>({});
 	const [leitorTelaAtivo, setLeitorTelaAtivo] = useState(true);
@@ -27,14 +49,8 @@ function App() {
 	const [removerAmendoim, setRemoverAmendoim] = useState(true);
 	const [removerBrocolis, setRemoverBrocolis] = useState(false);
 	const [pedidoExpandido, setPedidoExpandido] = useState(false);
+	const [pedidoFinalizado, setPedidoFinalizado] = useState(false);
 	const [showA11ySetup, setShowA11ySetup] = useState(false);
-
-	useEffect(() => {
-		const setupDone = window.localStorage.getItem(A11Y_SETUP_STORAGE_KEY);
-		if (!setupDone) {
-			setShowA11ySetup(true);
-		}
-	}, []);
 
 	const filtered = useMemo(() => {
 		const normalized = normalizeText(query).trim();
@@ -46,10 +62,15 @@ function App() {
 				dish.ingredientes.some((i) => normalizeText(i).includes(normalized)) ||
 				dish.alergenos.some((a) => normalizeText(a).includes(normalized));
 
-			const isSafe = selectedAlergenos.every((a) => !dish.alergenos.includes(a));
-			return matchesText && isSafe;
+			const matchesPreferences = selectedPreferences.every((preference) => {
+				if (preference === 'vegano' || preference === 'vegetariano') {
+					return dish.tags.includes(preference);
+				}
+				return !dish.alergenos.includes(preference);
+			});
+			return matchesText && matchesPreferences;
 		});
-	}, [query, selectedAlergenos]);
+	}, [query, selectedPreferences]);
 
 	const pratoSelecionado = useMemo(
 		() => (selectedDishId ? dishes.find((dish) => dish.id === selectedDishId) ?? null : null),
@@ -90,10 +111,35 @@ function App() {
 
 	const classes = ['app-root', `contrast-${contrast}`].join(' ');
 
-	const toggleAlergeno = (a: Alergeno) => {
-		setSelectedAlergenos((prev) =>
-			prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a],
+	const togglePreference = (preference: Preference) => {
+		setSelectedPreferences((prev) =>
+			prev.includes(preference) ? prev.filter((item) => item !== preference) : [...prev, preference],
 		);
+	};
+
+	const buscarPorVoz = () => {
+		const browserWindow = window as Window & {
+			SpeechRecognition?: SpeechRecognitionConstructor;
+			webkitSpeechRecognition?: SpeechRecognitionConstructor;
+		};
+		const Recognition = browserWindow.SpeechRecognition ?? browserWindow.webkitSpeechRecognition;
+		if (!Recognition) {
+			setAnnounce('A busca por voz não está disponível neste navegador. Digite sua busca no campo.');
+			return;
+		}
+
+		const recognition = new Recognition();
+		recognition.lang = 'pt-BR';
+		recognition.interimResults = false;
+		recognition.onresult = (event) => {
+			const transcript = event.results[0]?.[0]?.transcript;
+			if (transcript) {
+				setQuery(transcript);
+				setAnnounce(`Busca por voz: ${transcript}`);
+			}
+		};
+		recognition.onerror = () => setAnnounce('Não consegui reconhecer a busca. Tente novamente ou digite o nome do prato.');
+		recognition.start();
 	};
 
 	const falar = (texto: string) => {
@@ -133,10 +179,17 @@ function App() {
 			...prev,
 			[dishId]: (prev[dishId] ?? 0) + quantidade,
 		}));
+		setPedidoFinalizado(false);
 
 		const mensagem = `${dish.nome} adicionado ao pedido.`;
 		setAnnounce(mensagem);
 		falar(mensagem);
+	};
+
+	const finalizarPedido = () => {
+		setCart({});
+		setPedidoFinalizado(true);
+		setAnnounce('Pedido finalizado. Obrigado por escolher a Casa do Ipê.');
 	};
 
 	const atualizarQuantidade = (dishId: string, delta: number) => {
@@ -184,17 +237,13 @@ function App() {
 
 	return (
 		<div className={classes} style={{ fontSize: `${fontScale}%` }}>
-			<header className="topbar" aria-label="Cabeçalho do cardápio">
+			<header className="topbar" aria-label="Identificação do estabelecimento">
 				<div className="topbar-brand">
-					<p className="label">Casa do Ipê</p>
-					<h1>Cardápio Acessível</h1>
-					<p className="subtitle">Visual simples, leitura fácil e decisão segura.</p>
-				</div>
-				<div className="topbar-actions">
-					<button type="button" onClick={abrirWhatsappAjuda}>Ajuda</button>
-					<button type="button" onClick={() => setPedidoExpandido(true)}>
-						Meu pedido: {totalItens} item(ns)
-					</button>
+					<span className="brand-mark" aria-hidden="true"><Utensils size={34} strokeWidth={2.2} /></span>
+					<div>
+						<p className="label">Casa do Ipê</p>
+						<p className="subtitle">Comida de verdade, para todos.</p>
+					</div>
 				</div>
 			</header>
 
@@ -253,8 +302,11 @@ function App() {
 			) : null}
 
 			<section className="accessibility-toolbar" aria-label="Barra de acessibilidade">
+				<div className="accessibility-heading">
+					<h2>Acessibilidade</h2>
+					<button type="button" onClick={abrirSetupAcessibilidade}>Ajustes</button>
+				</div>
 				<div className="toolbar-group">
-					<span className="toolbar-title">Acessibilidade</span>
 					<button onClick={() => setFontScale((v) => Math.max(90, v - 10))} aria-label="Diminuir fonte">
 						A-
 					</button>
@@ -265,27 +317,38 @@ function App() {
 				</div>
 				<div className="toolbar-group">
 					<span>Contraste</span>
-					<button onClick={() => setContrast('padrao')}>Padrão</button>
-					<button onClick={() => setContrast('alto-claro')}>Claro</button>
-					<button onClick={() => setContrast('alto-escuro')}>Escuro</button>
+					<button
+						className={contrast === 'alto-escuro' ? 'toggle active' : 'toggle'}
+						aria-pressed={contrast === 'alto-escuro'}
+						aria-label="Alternar alto contraste"
+						onClick={() => setContrast((mode) => mode === 'alto-escuro' ? 'padrao' : 'alto-escuro')}
+					>
+						{contrast === 'alto-escuro' ? 'Ligado' : 'Desligado'}
+					</button>
 				</div>
 				<div className="toolbar-group">
-					<button onClick={() => falar('Navegação por voz ativa. Use os botões para ouvir as opções do cardápio.')}>Navegar por voz</button>
+					<button className="full-button voice-navigation" onClick={buscarPorVoz}>Navegar por voz</button>
+					<div className="reader-toggle">
+						<span>Leitor de tela: {leitorTelaAtivo ? 'ligado' : 'desligado'}</span>
+						<button
+							className={leitorTelaAtivo ? 'toggle active' : 'toggle'}
+							aria-label="Alternar leitor de tela"
+							aria-pressed={leitorTelaAtivo}
+							onClick={() => {
+								setLeitorTelaAtivo((prev) => {
+									const novoEstado = !prev;
+									setAnnounce(`Leitor de tela ${novoEstado ? 'ligado' : 'desligado'}.`);
+									return novoEstado;
+								});
+							}}
+						>
+							{leitorTelaAtivo ? 'Ligado' : 'Desligado'}
+						</button>
+					</div>
 					<button
+						className="full-button"
 						onClick={() => {
-							setLeitorTelaAtivo((prev) => {
-								const novoEstado = !prev;
-								setAnnounce(`Leitor de tela ${novoEstado ? 'ligado' : 'desligado'}.`);
-								return novoEstado;
-							});
-						}}
-					>
-						Leitor de tela: {leitorTelaAtivo ? 'ligado' : 'desligado'}
-					</button>
-					<button onClick={abrirSetupAcessibilidade}>Configuração inicial</button>
-					<button
-						onClick={() => {
-							setSelectedAlergenos([]);
+							setSelectedPreferences([]);
 							setQuery('');
 						}}
 					>
@@ -295,8 +358,12 @@ function App() {
 			</section>
 
 			<main id="main-content" className="layout">
+				<section className="menu-intro">
+					<h1>Cardápio Acessível</h1>
+					<p>Escolha com calma. Aqui, cada ingrediente importa.</p>
+				</section>
 				<aside className="panel" aria-labelledby="filtros-title">
-					<h2 id="filtros-title">Filtros</h2>
+					<h2 id="filtros-title">Suas preferências</h2>
 
 					<section className="group" aria-labelledby="busca-title">
 						<h3 id="busca-title">Buscar no cardápio</h3>
@@ -308,36 +375,46 @@ function App() {
 							onChange={(e) => setQuery(e.target.value)}
 							placeholder="Ex: frango, sem lactose"
 						/>
-						<button className="full-button" onClick={ouvirOpcoes}>
-							Ouvir opções
+						<button className="full-button" onClick={buscarPorVoz}>
+							Buscar por voz
 						</button>
+						<div className="suggestions">
+							<p>Escolha uma sugestão para buscar</p>
+							<button onClick={() => setQuery('Frango com amendoim')}>Frango com amendoim</button>
+							<button onClick={() => setQuery('Frutos do mar')}>Frutos do mar</button>
+						</div>
 					</section>
 
 					<section className="group" aria-labelledby="restricoes-title">
-						<h3 id="restricoes-title">Evitar alérgenos</h3>
-						<ul className="chips" aria-label="Lista de alérgenos filtráveis">
-							{alergenosDisponiveis.map((a) => {
-								const active = selectedAlergenos.includes(a);
+						<h3 id="restricoes-title">Selecione o que você precisa evitar</h3>
+							<ul className="chips" aria-label="Preferências alimentares">
+								{preferenceOptions.map(({ key, label }) => {
+									const active = selectedPreferences.includes(key);
 								return (
-									<li key={a}>
+										<li key={key}>
 										<button
 											className={active ? 'chip active' : 'chip'}
-											onClick={() => toggleAlergeno(a)}
+												onClick={() => togglePreference(key)}
 											aria-pressed={active}
 										>
-											{active ? 'Remover' : 'Evitar'} {a}
+												{active ? '✓' : '+'} {label}
 										</button>
 									</li>
 								);
 							})}
 						</ul>
 
-						<p className="panel-note">Nenhum filtro selecionado? Você verá o cardápio completo.</p>
+						<p className="filter-status" role="status" aria-live="polite">
+							{selectedPreferences.length === 0
+								? 'Nenhum filtro selecionado.'
+								: `${selectedPreferences.length} preferência(s) selecionada(s).`}
+						</p>
+						<p className="panel-note">Os filtros consideram a receita. Confira também os avisos de contato cruzado.</p>
 
 						<button
 							className="full-button"
 							onClick={() => {
-								setSelectedAlergenos([]);
+								setSelectedPreferences([]);
 								setQuery('');
 							}}
 						>
@@ -383,7 +460,8 @@ function App() {
 							)}
 
 							<p className="details-price">Total do pedido: R$ {totalPedido.toFixed(2).replace('.', ',')}</p>
-							<button className="primary full-button" disabled={totalItens === 0}>
+							{pedidoFinalizado && <p className="order-confirmation" role="status">Pedido finalizado. Obrigado!</p>}
+							<button className="primary full-button" disabled={totalItens === 0} onClick={finalizarPedido}>
 								Finalizar pedido
 							</button>
 						</section>
@@ -455,7 +533,7 @@ function App() {
 								<button className="primary" onClick={() => adicionarAoPedido(pratoSelecionado.id)}>
 									+ Adicionar ao pedido
 								</button>
-								<button onClick={() => falar('Olá, tenho alergia alimentar e preciso confirmar os ingredientes antes de finalizar o pedido.')}>Falar sobre minha alergia</button>
+								<button onClick={abrirWhatsappAjuda}>Falar sobre minha alergia</button>
 							</div>
 						</section>
 					) : (
@@ -466,39 +544,31 @@ function App() {
 							</div>
 
 							<p className="warning" role="note">
-								Sua segurança vem primeiro: nossa cozinha compartilha utensílios e superfícies. Em caso de alergia alimentar, converse com a equipe antes de pedir.
+								<strong>Sua segurança vem primeiro</strong>
+								<span>Nossa cozinha compartilha utensílios e superfícies. Não garantimos ausência de alérgenos.</span>
 							</p>
 
 							<ul className="dish-list list-centered">
 								{filtered.map((dish) => (
 									<li key={dish.id} className="dish-card">
-										<img
-											className="dish-image"
-											src={dish.imagem}
-											alt={`Foto do prato ${dish.nome}`}
-											loading="lazy"
-										/>
-
 										<div className="dish-head">
 											<h2>{dish.nome}</h2>
 											<strong>R$ {dish.preco.toFixed(2).replace('.', ',')}</strong>
 										</div>
 										<p className="dish-summary">{dish.resumo}</p>
 
-										<div className="tags" aria-label="Etiquetas do prato">
-											{dish.tags.map((tag) => (
-												<span key={tag} className="tag">
-													{tag}
-												</span>
-											))}
-										</div>
+										{dish.tags.length > 0 && (
+											<p className="dietary-tags">
+												Receita {dish.tags.map((tag) => tag === 'vegano' ? 'vegana' : tag === 'vegetariano' ? 'vegetariana' : tag).join(' e ')}.
+											</p>
+										)}
 
 										{dish.alergenos.length > 0 ? (
 											<p className="alert" role="alert">
 												Contém {dish.alergenos.join(' e ')}. Pode haver contato cruzado na cozinha.
 											</p>
 										) : (
-											<p className="safe">Sem os alérgenos dos filtros na receita. Pode haver contato cruzado na cozinha.</p>
+											<p className="safe">Sem os 6 alérgenos dos filtros na receita. Pode haver contato cruzado na cozinha.</p>
 										)}
 
 										<div className="dish-actions">
@@ -517,38 +587,24 @@ function App() {
 									</li>
 								))}
 							</ul>
+							<button className="full-button listen-options" onClick={ouvirOpcoes}>
+								Ouvir opções do cardápio
+							</button>
 						</section>
 					)}
 				</section>
 
-				<aside className="panel order-sidebar" aria-label="Menu lateral do pedido">
-					<h2>Meu pedido</h2>
-					<p>{totalItens} item(ns)</p>
-
-					<ul className="order-mini-list">
-						{itensPedido.map(({ dish, qty }) => (
-							<li key={dish.id}>
-								<span>{dish.nome}</span>
-								<strong>{qty}x</strong>
-							</li>
-						))}
-					</ul>
-
-					<p className="details-price">Total: R$ {totalPedido.toFixed(2).replace('.', ',')}</p>
-					<button className="full-button" onClick={() => setPedidoExpandido(true)}>
-						Avançar
-					</button>
-					<button className="primary full-button" disabled={totalItens === 0}>
-						Finalizar pedido
-					</button>
-
-					<p className="panel-note">Use “Avançar” para abrir a visão completa e ajustar quantidades.</p>
-				</aside>
+				<section className="help-section" aria-labelledby="help-title">
+					<h2 id="help-title">Podemos ajudar?</h2>
+					<p>Se você tem alergia alimentar, converse com nossa equipe antes de pedir.</p>
+					<button className="help-button" type="button" onClick={abrirWhatsappAjuda}>Chamar atendimento</button>
+					<p className="help-brand">Casa do Ipê · Cardápio Acessível</p>
+				</section>
 			</main>
 
-			<footer className="footer-note">
-				<p>Sua escolha merece cuidado. Para restrições alimentares, confirme ingredientes e condições de preparo com nossa equipe.</p>
-			</footer>
+			<button className="cart-bar" type="button" onClick={() => setPedidoExpandido(true)}>
+				Ver meu pedido · {totalItens} {totalItens === 1 ? 'item' : 'itens'}
+			</button>
 
 			<p className="sr-only" role="status" aria-live="polite">
 				{announce}
